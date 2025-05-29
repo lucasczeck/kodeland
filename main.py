@@ -435,13 +435,13 @@ class Enemy(AnimatedSprite):
         self.move_timer += dt
 
         # Different movement speeds based on shark type
-        if self.enemy_type == 'reef_shark':
+        if self.enemy_type == 'bull_shark':
             move_frequency = 0.8
             enemy_speed = 35
-        elif self.enemy_type == 'bull_shark':
+        elif self.enemy_type == 'great_white':
             move_frequency = 1.0
             enemy_speed = 30
-        elif self.enemy_type == 'great_white':
+        elif self.enemy_type == 'reef_shark':
             move_frequency = 0.4
             enemy_speed = 40
         else:  # hammer_shark
@@ -455,7 +455,7 @@ class Enemy(AnimatedSprite):
             new_direction = None
 
             # Hunter behavior for great whites
-            if self.enemy_type == 'great_white' and hero_distance <= 6 and not self.tired:
+            if hero_distance <= 6 and not self.tired:
                 dx = hero_pos[0] - self.grid_x
                 dy = hero_pos[1] - self.grid_y
 
@@ -465,7 +465,7 @@ class Enemy(AnimatedSprite):
                     new_direction = Direction.DOWN if dy > 0 else Direction.UP
             else:
                 # Normal patrol behavior
-                if self.enemy_type == 'reef_shark' and hero_distance <= 4:
+                if hero_distance <= 4:
                     patrol_radius = 6
                 else:
                     patrol_radius = self.patrol_radius
@@ -646,6 +646,10 @@ class Game:
     """Main game class"""
 
     def __init__(self):
+        self.powerup_spawn_interval = None
+        self.powerup_spawn_timer = None
+        self.enemy_spawn_interval = None
+        self.enemy_spawn_timer = None
         self.state = GameState.MENU
         self.dungeon = Dungeon()
         self.hero = None
@@ -666,7 +670,7 @@ class Game:
 
         # Create sharks
         self.enemies = []
-        shark_types = ['reef_shark'] * 8 + ['bull_shark'] * 6 + ['great_white'] * 4 + ['hammer_shark'] * 2
+        shark_types = ['reef_shark'] * 10 + ['bull_shark'] * 7 + ['great_white'] * 3
 
         for shark_type in shark_types:
             attempts = 0
